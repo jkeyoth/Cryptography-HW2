@@ -22,7 +22,7 @@ def findRepeats(size):
 	curSpot = 0;
 	
 def Decrypt(keySize):
-	
+	"""Decrypt the cipher text, assuming key is of length keySize"""
 	#TODO: Implement
 
 ###main###
