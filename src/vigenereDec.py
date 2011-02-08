@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys #for argv
+from fractions import gcd #built-in python gcd. Probably faster than mine from the previous homework.
 
 if len(sys.argv) != 2:
 	print "Usage: vigenereDec.py cipherFile"
@@ -55,7 +56,11 @@ def findRepeats(size):
 def findKeyLength():
 	"""Find the most likely key length from the array of lengths"""
 	#TODO: Implement
-	pass
+	runningGCD = gcd(lengths[0], lengths[1])
+	for le in lengths:
+		runningGCD = gcd(runningGCD, le)
+	return runningGCD
+
 
 def Decrypt(keySize):
 	""" Decrypt the cipher text, assuming key is of length keySize"""
@@ -75,8 +80,10 @@ for c in cipher:
 halfway = letterCount / 2
 
 size = halfway
-#while size > 2:
-#	findRepeats(size)
-#	size -= 1
+while size > 2:
+	findRepeats(size)
+	size -= 1
 
-print findRepeatedLength("as", 0)
+lengths = list(set(lengths))
+
+print lengths
