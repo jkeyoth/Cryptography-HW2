@@ -2,7 +2,7 @@
 
 import sys #for argv
 from fractions import gcd #built-in python gcd. Probably faster than mine from the previous homework.
-
+import string
 if len(sys.argv) != 2:
 	print "Usage: vigenereDec.py cipherFile"
 	exit()
@@ -10,38 +10,26 @@ if len(sys.argv) != 2:
 cipherFile = open(sys.argv[1])
 
 cipher = ""
-letterCount=0
-halfway = 0
 #lengths between repetitions
 lengths = []
 
 #functions
-def buildStringSplice(start, le):
-	"""Return a string from cipher of length le starting at start. The string will contain l characters,
-	but is not a normal slice, because it skips over anything that isn't a letter."""
-	cnt = 0
-	cur = 0
-	ret = ""
-	while cnt < le:
-		if ord(cipher[start+cur]) >= ord("a") and ord(cipher[start+cur]) <= ord("z"):
-			ret += cipher[start+cur]
-			cnt += 1
-		cur += 1
-	return ret
+
 		
 
 def findRepeatedLength(str, start):
 	"""Take a string and the first spot the string was seen, and returns the distance between
 	repetitions in cipher. Returns [] if no matches are found. Otherwise, the return is an
 	array of lengths"""
-	if start + len(str) >= len(cipher):
-		return []
+	lens = []
 	curSpot = start + len(str)
 	while curSpot + len(str) <= len(cipher):
 		if curSpot > start and cipher[curSpot:curSpot+len(str)] == str:
-			return [curSpot - start] + findRepeatedLength(str, curSpot)
+			print str + " matched"
+			lens.append(curSpot - start)
+			start = curSpot
 		curSpot += 1
-	return []
+	return lens
 	
 
 def findRepeats(size):
@@ -55,11 +43,7 @@ def findRepeats(size):
 
 def findKeyLength():
 	"""Find the most likely key length from the array of lengths"""
-	#TODO: Implement
-	runningGCD = gcd(lengths[0], lengths[1])
-	for le in lengths:
-		runningGCD = gcd(runningGCD, le)
-	return runningGCD
+	
 
 
 def Decrypt(keySize):
@@ -70,20 +54,19 @@ def Decrypt(keySize):
 
 #read cipherFile into cipher, a string
 for l in cipherFile:
-	cipher += l.strip().lower()
+	l = "".join(l.strip().split())
+	for c in string.punctuation:
+		l = l.replace(c, "")
+	cipher += l
+print cipher
 
-#count number of encrypted letters in cipher. Ignore any non-letters.
-for c in cipher:
-	if ord(c) >= ord("a") and ord(c) <= ord("z"):
-		letterCount += 1
-		
-halfway = letterCount / 2
-
-size = halfway
+size = 10
 while size > 2:
+	print "trying size", size
 	findRepeats(size)
 	size -= 1
 
 lengths = list(set(lengths))
 
 print lengths
+findKeyLength()
