@@ -16,8 +16,6 @@ MAX_KEY_LENGTH = 20
 cipher = ""
 #lengths between repetitions
 lengths = dict()
-keySize = 0
-
 
 #functions
 def modShift(ammount):
@@ -42,20 +40,21 @@ def factors(num):
 	facts.sort(reverse=True)
 	return facts
 
-def splitToCeasers():
+def splitToCeasers(keyS):
 	"""Split the cipher into columns sharing the same encrypting key letter"""
 	cnt = 0;
-	columns = [""] * keySize
+	columns = [""] * keyS
 	for c in cipher:
-		columns[cnt%keySize] += c
+		columns[cnt%keyS] += c
 		cnt += 1
 	return columns
 
-def Decrypt():
+def Decrypt(keyS):
 	""" Decipher the cipher text, assuming key is of length keySize"""
+	#decrypt each key length, check in dict if either is right
+	
 	#TODO: Implement
-	columns = splitToCeasers()
-	print columns
+	columns = splitToCeasers(keyS)
 ###main###
 
 #read cipherFile into cipher, a string
@@ -74,7 +73,9 @@ findRepeats()
 sortedLengths = sorted(lengths.iteritems(), key=operator.itemgetter(1))
 sortedLengths.reverse()
 
-keySize = sortedLengths[0][0]
-print "Key length:",keySize
+keySizeN = sortedLengths[0][0]
 
-print factors(8192)
+keySizes = [keySizeN] + factors(keySizeN)
+print "Possible Key Sizes:", keySizes
+
+
