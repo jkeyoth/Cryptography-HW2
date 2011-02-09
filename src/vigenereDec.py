@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-import sys #for argv
-from fractions import gcd #built-in python gcd. Probably faster than mine from the previous homework.
+import operator
 import string
+import sys #for argv
+
 if len(sys.argv) != 2:
 	print "Usage: vigenereDec.py cipherFile"
 	exit()
@@ -46,16 +47,13 @@ for l in cipherFile:
 		l = l.replace(c, "")
 	cipher += l
 
-print len(cipher)
 MAX_KEY_LENGTH = len(cipher) / 10
 
 findRepeats()
 
-import operator
 sortedLengths = sorted(lengths.iteritems(), key=operator.itemgetter(1))
 sortedLengths.reverse()
 
-print sortedLengths[0:10]
-
 keySize = sortedLengths[0][0]
 print "Key length:",keySize
+
