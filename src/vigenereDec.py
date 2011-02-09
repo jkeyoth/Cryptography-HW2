@@ -32,10 +32,30 @@ def findRepeats():
 				matches = matches + 1
 		lengths[i] = matches
 
-def Decrypt(keySize):
-	""" Decrypt the cipher text, assuming key is of length keySize"""
+def factors(num):
+	facts = []
+	for i in xrange(2, num/2):
+		if num % i == 0:
+			facts.append(i)
+			facts.append(num/i)
+	facts = list(set(facts))
+	facts.sort(reverse=True)
+	return facts
+
+def splitToCeasers():
+	"""Split the cipher into columns sharing the same encrypting key letter"""
+	cnt = 0;
+	columns = [""] * keySize
+	for c in cipher:
+		columns[cnt%keySize] += c
+		cnt += 1
+	return columns
+
+def Decrypt():
+	""" Decipher the cipher text, assuming key is of length keySize"""
 	#TODO: Implement
-	pass
+	columns = splitToCeasers()
+	print columns
 ###main###
 
 #read cipherFile into cipher, a string
@@ -57,3 +77,4 @@ sortedLengths.reverse()
 keySize = sortedLengths[0][0]
 print "Key length:",keySize
 
+print factors(8192)
