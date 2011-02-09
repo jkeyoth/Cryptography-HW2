@@ -15,8 +15,8 @@ MAX_KEY_LENGTH = 20
 cipher = ""
 #lengths between repetitions
 lengths = dict()
-for i in xrange(MAX_KEY_LENGTH):
-	lengths[i] = 0
+keySize = 0
+
 
 #functions
 def modShift(ammount):
@@ -30,11 +30,6 @@ def findRepeats():
 			if cipher[j] == shifted[j]:
 				matches = matches + 1
 		lengths[i] = matches
-	
-
-def findKeyLength():
-	"""Find the most likely key length from the array of lengths"""
-	
 
 def Decrypt(keySize):
 	""" Decrypt the cipher text, assuming key is of length keySize"""
@@ -50,7 +45,9 @@ for l in cipherFile:
 	for c in string.punctuation:
 		l = l.replace(c, "")
 	cipher += l
-print cipher
+
+print len(cipher)
+MAX_KEY_LENGTH = len(cipher) / 10
 
 findRepeats()
 
@@ -58,7 +55,7 @@ import operator
 sortedLengths = sorted(lengths.iteritems(), key=operator.itemgetter(1))
 sortedLengths.reverse()
 
-print "(shift, occurrences)"
-print sortedLengths[0]
+print sortedLengths[0:10]
 
-findKeyLength()
+keySize = sortedLengths[0][0]
+print "Key length:",keySize
