@@ -9,42 +9,32 @@ if len(sys.argv) != 2:
 
 cipherFile = open(sys.argv[1])
 
+MIN_KEY_LENGTH = 3
+MAX_KEY_LENGTH = 20
+
 cipher = ""
 #lengths between repetitions
-lengths = []
+lengths = dict()
+for i in xrange(MAX_KEY_LENGTH):
+	lengths[i] = 0
 
 #functions
+def modShift(ammount):
+	return cipher[ammount:len(cipher)] + cipher[0:ammount]
 
-		
-
-def findRepeatedLength(str, start):
-	"""Take a string and the first spot the string was seen, and returns the distance between
-	repetitions in cipher. Returns [] if no matches are found. Otherwise, the return is an
-	array of lengths"""
-	lens = []
-	curSpot = start + len(str)
-	while curSpot + len(str) <= len(cipher):
-		if curSpot > start and cipher[curSpot:curSpot+len(str)] == str:
-			print str + " matched"
-			lens.append(curSpot - start)
-			start = curSpot
-		curSpot += 1
-	return lens
+def findRepeats():
+	for i in xrange(MIN_KEY_LENGTH, MAX_KEY_LENGTH):
+		shifted = modShift(i)
+		matches = 0
+		for j in xrange(len(cipher)):
+			if cipher[j] == shifted[j]:
+				matches = matches + 1
+		lengths[i] = matches
 	
-
-def findRepeats(size):
-	"""Look for repeats with repeated string of size size"""
-	global lengths, cipher
-	curSpot = 0
-	while curSpot < len(cipher):
-		lengths = lengths + findRepeatedLength(cipher[curSpot:curSpot+size], curSpot)
-		
-		curSpot += 1
 
 def findKeyLength():
 	"""Find the most likely key length from the array of lengths"""
 	
-
 
 def Decrypt(keySize):
 	""" Decrypt the cipher text, assuming key is of length keySize"""
@@ -53,20 +43,22 @@ def Decrypt(keySize):
 ###main###
 
 #read cipherFile into cipher, a string
+origCipher=""
 for l in cipherFile:
+	origCipher += l
 	l = "".join(l.strip().split())
 	for c in string.punctuation:
 		l = l.replace(c, "")
 	cipher += l
 print cipher
 
-size = 10
-while size > 2:
-	print "trying size", size
-	findRepeats(size)
-	size -= 1
+findRepeats()
 
-lengths = list(set(lengths))
+import operator
+sortedLengths = sorted(lengths.iteritems(), key=operator.itemgetter(1))
+sortedLengths.reverse()
 
-print lengths
+print "(shift, occurrences)"
+print sortedLengths[0]
+
 findKeyLength()
